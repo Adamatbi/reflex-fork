@@ -64,7 +64,6 @@ from reflex.components.core.client_side_routing import (
     Default404Page,
     wait_for_client_redirect,
 )
-from reflex.components.core.sticky import sticky
 from reflex.components.core.upload import Upload, get_upload_dir
 from reflex.components.radix import themes
 from reflex.components.sonner.toast import toast
@@ -1097,18 +1096,6 @@ class App(MiddlewareMixin, LifespanMixin):
         for k, component in self._pages.items():
             self._pages[k] = self._add_overlay_to_component(component)
 
-    def _setup_sticky_badge(self):
-        """Add the sticky badge to the app."""
-        from reflex.components.component import memo
-
-        @memo
-        def memoized_badge():
-            sticky_badge = sticky()
-            sticky_badge._add_style_recursive({})
-            return sticky_badge
-
-        self.app_wraps[(0, "StickyBadge")] = lambda _: memoized_badge()
-
     def _apply_decorated_pages(self):
         """Add @rx.page decorated pages to the app.
 
@@ -1280,8 +1267,6 @@ class App(MiddlewareMixin, LifespanMixin):
             else:
                 config.show_built_with_reflex = True
 
-        if is_prod_mode() and config.show_built_with_reflex:
-            self._setup_sticky_badge()
 
         progress.advance(task)
 
